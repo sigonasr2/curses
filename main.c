@@ -30,7 +30,6 @@ int main(int argc,char**argv) {
             lastTime=clock();
         }
     }
-    getch();
     endwin();
     return 0;
 }
