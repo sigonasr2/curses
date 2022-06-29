@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <ncurses.h>
 #include "extras.h"
+#include "utils/utils.h"
 
 int main(int argc,char**argv) {
     int rows,cols;
@@ -21,6 +22,7 @@ int main(int argc,char**argv) {
     addch(ACS_BTEE);
     addch(' ');
     writeExtras();
+    testReach();
     mvaddch(5,17,ACS_DARROW);
 
     attron(COLOR_PAIR(1));
