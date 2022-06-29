@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <ncurses.h>
 
-int main(char argc,char**argv) {
+int main(int argc,char**argv) {
     int rows,cols;
 
     initscr();
@@ -9,7 +9,6 @@ int main(char argc,char**argv) {
     raw();
     keypad(stdscr,TRUE);
     noecho();
-
     addch(ACS_BULLET);
     addch(ACS_BOARD);
     addch(ACS_CKBOARD);
@@ -21,6 +20,7 @@ int main(char argc,char**argv) {
 
     mvprintw(4,7,"There are %dx%d squares.",rows,cols);
 
+    mvchgat(4,10,4,A_REVERSE,0,NULL);
     refresh();
     getch();
     endwin();
