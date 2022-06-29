@@ -5,7 +5,7 @@
 #include "project/utils/utils.h"
 
 int main(int argc,char**argv) {
-    unsigned int keyLog[25];
+    int*keyLog=calloc(25,sizeof(int));
     unsigned short currentLogCounter=0;
     unsigned int frameCount = 0;
     int rows,cols;
@@ -33,7 +33,7 @@ int main(int argc,char**argv) {
         if (clock()-lastTime>FRAMETIME) {
             mvprintw(5,7,"There are %dx%d squares. (%d)",rows,cols,frameCount++);
             for (int i=0;i<25;i++) {
-                if (keyLog[i]!=ERR) {
+                if (keyLog[i]>0) {
                     mvprintw(6+i,2,"Key %d was pressed.",keyLog[i]);
                 }
             }
@@ -41,6 +41,7 @@ int main(int argc,char**argv) {
             lastTime=clock();
         }
     }
+    free(keyLog);
     endwin();
     return 0;
 }
