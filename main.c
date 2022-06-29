@@ -1,10 +1,13 @@
 #include <stdlib.h>
 #include <ncurses.h>
+#include "extras.h"
 
 int main(int argc,char**argv) {
     int rows,cols;
 
     initscr();
+    start_color();
+    init_pair(1,COLOR_RED,COLOR_BLACK);
     getmaxyx(stdscr,rows,cols);
     raw();
     keypad(stdscr,TRUE);
@@ -16,11 +19,13 @@ int main(int argc,char**argv) {
     addch(ACS_BLOCK);
     addch(ACS_BSBS);
     addch(ACS_BTEE);
+    addch(' ');
+    writeExtras();
     mvaddch(5,17,ACS_DARROW);
 
+    attron(COLOR_PAIR(1));
     mvprintw(4,7,"There are %dx%d squares.",rows,cols);
-
-    mvchgat(4,10,4,A_REVERSE,0,NULL);
+    attroff(COLOR_PAIR(1));
     refresh();
     getch();
     endwin();
