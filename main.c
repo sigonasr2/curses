@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <ncurses.h>
-#include "extras.h"
-#include "utils/utils.h"
+#include "project/extras.h"
+#include "project/utils/utils.h"
 
 int main(int argc,char**argv) {
     int rows,cols;
