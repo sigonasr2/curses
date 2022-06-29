@@ -5,6 +5,8 @@
 #include "project/utils/utils.h"
 
 int main(int argc,char**argv) {
+    unsigned int keyLog[25];
+    unsigned short currentLogCounter=0;
     unsigned int frameCount = 0;
     int rows,cols;
     clock_t lastTime = clock();
@@ -21,11 +23,20 @@ int main(int argc,char**argv) {
 
 
     refresh();
-    int ch = getch(); //410 is used when resizing the window.
     getmaxyx(stdscr,rows,cols);
+    int ch=ERR;
     while (true) {
+        if ((ch=getch())!=ERR) {
+            keyLog[currentLogCounter]=ch;
+            currentLogCounter=(currentLogCounter+1)%25;
+        }
         if (clock()-lastTime>FRAMETIME) {
-            mvprintw(5,7,"There are %dx%d squares. (%d)(%d)",rows,cols,frameCount++,getch());
+            mvprintw(5,7,"There are %dx%d squares. (%d)",rows,cols,frameCount++);
+            for (int i=0;i<25;i++) {
+                if (keyLog[i]!=ERR) {
+                    mvprintw(6+i,2,"Key %d was pressed.",keyLog[i]);
+                }
+            }
             refresh();
             lastTime=clock();
         }
