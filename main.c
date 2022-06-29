@@ -3,7 +3,20 @@
 
 int main(char argc,char**argv) {
     initscr();
-    printw("Hello World!");
+    raw();
+    keypad(stdscr,TRUE);
+    noecho();
+
+    printw("Type any character:");
+    int ch=getch();
+
+    if (ch==KEY_F(1)) {
+        printw("F1 Key pressed!");
+    } else {
+        attron(A_BOLD);
+        printw("%c",ch);
+        attroff(A_BOLD);
+    }
 
     refresh();
     getch();
