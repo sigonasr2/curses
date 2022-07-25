@@ -64,7 +64,7 @@ void drawBackground(int*currentcol,int background_id,int x,int y,int w,int h) {
     switch(background_id) {
         case 0:{
             move(y,x);
-            changeColor(currentcol,3);
+            changeColor(currentcol,9);
             for (int yy=0;yy<h;yy++) {
                 for (int xx=0;xx<w;xx++) {
                     addch(ACS_DIAMOND);
@@ -102,6 +102,7 @@ int main(int argc,char**argv) {
     init_pair(6,COLOR_MAGENTA,COLOR_BLACK);
     init_pair(7,COLOR_CYAN,COLOR_BLACK);
     init_pair(8,COLOR_WHITE,COLOR_BLACK);
+    init_pair(9,COLOR_GREEN,COLOR_WHITE);
     changeColor(&currentcol,6);
 
     WINDOW*messageBox=newwin(4,cols-2,rows-5,1);
