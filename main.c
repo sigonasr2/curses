@@ -64,9 +64,13 @@ void drawBackground(int*currentcol,int background_id,int x,int y,int w,int h) {
     switch(background_id) {
         case 0:{
             move(y,x);
-            changeColor(currentcol,9);
             for (int yy=0;yy<h;yy++) {
                 for (int xx=0;xx<w;xx++) {
+                    if (xx%2==0) {
+                        changeColor(currentcol,9);
+                    } else {
+                        changeColor(currentcol,10);
+                    }
                     addch(ACS_DIAMOND);
                 }
                 move(getcury(stdscr)+1,x);
@@ -103,6 +107,7 @@ int main(int argc,char**argv) {
     init_pair(7,COLOR_CYAN,COLOR_BLACK);
     init_pair(8,COLOR_WHITE,COLOR_BLACK);
     init_pair(9,COLOR_GREEN,COLOR_WHITE);
+    init_pair(10,COLOR_BLACK,COLOR_GREEN);
     changeColor(&currentcol,6);
 
     WINDOW*messageBox=newwin(4,cols-2,rows-5,1);
@@ -143,7 +148,7 @@ int main(int argc,char**argv) {
                 messageBox=newwin(4,cols-2,rows-5,1);
             }
             //mvprintw(5,7,"There are %dx%d squares. (%d)",cols,rows,frameCount++);
-            drawBackground(&currentcol,0,4,4,4,4);
+            drawBackground(&currentcol,0,0,0,cols-1,rows);
             if (messageBox!=NULL) {
                 drawBorder(messageBox);
                 mvwprintw(messageBox,0,0,"There are %dx%d squares. (%d) It is good!",cols,rows,frameCount);
