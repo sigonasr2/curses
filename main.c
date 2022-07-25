@@ -39,6 +39,17 @@ void drawBorder(WINDOW*box) {
     }
 }
 
+//Returns true if the window was toggled on, or false if it got hidden.
+boolean ToggleWindow(WINDOW**win,int w,int h,int x,int y) {
+    if (*win!=NULL) {
+        *win=NULL;
+        delwin(*win);
+        clear();
+    } else {
+        *win=newwin(h,w,y,x);
+    }
+}
+
 int main(int argc,char**argv) {
     int*keyLog=calloc(25,sizeof(int));
     unsigned short currentLogCounter=0;
@@ -70,13 +81,7 @@ int main(int argc,char**argv) {
             keyLog[currentLogCounter]=ch;
             currentLogCounter=(currentLogCounter+1)%25;
             if (ch=='A') {
-                if (messageBox!=NULL) {
-                    messageBox=NULL;
-                    delwin(messageBox);
-                    clear();
-                } else {
-                    messageBox=newwin(4,cols-2,rows-5,1);
-                }
+                ToggleWindow(&messageBox,cols-2,4,1,rows-5);
             }
             if (ch==KEY_RESIZE) {
                 resizeOccured=true;
