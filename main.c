@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <ncurses.h>
 #include <time.h>
-#include "project/extras.h"
 #include "project/utils/utils.h"
 
 void drawBorder(WINDOW*box) {
@@ -61,6 +60,8 @@ int main(int argc,char**argv) {
     drawBorder(messageBox);
     //box(messageBox,0,0);
 
+    boolean resizeOccured=false;
+
     refresh();
     getmaxyx(stdscr,rows,cols);
     int ch=ERR;
@@ -68,19 +69,32 @@ int main(int argc,char**argv) {
         if ((ch=getch())!=ERR) {
             keyLog[currentLogCounter]=ch;
             currentLogCounter=(currentLogCounter+1)%25;
+            if (ch=='A') {
+                if (messageBox!=NULL) {
+                    messageBox=NULL;
+                    delwin(messageBox);
+                    clear();
+                } else {
+                    messageBox=newwin(4,cols-2,rows-5,1);
+                }
+            }
             if (ch==KEY_RESIZE) {
+                resizeOccured=true;
                 getmaxyx(stdscr,rows,cols);
-                delwin(messageBox);
-                messageBox=newwin(4,cols-2,rows-5,1);
             }
         }
         if (clock()-lastTime>FRAMETIME) {
+            if (resizeOccured) {
+                resizeOccured=false;
+                clear();
+                delwin(messageBox);
+                messageBox=newwin(4,cols-2,rows-5,1);
+            }
             //mvprintw(5,7,"There are %dx%d squares. (%d)",cols,rows,frameCount++);
-            drawBorder(messageBox);
-            mvwprintw(messageBox,0,0,"There are %dx%d squares. (%d) It is good!",cols,rows,frameCount++);
-            mvwprintw(messageBox,1,0,"There are %dx%d squares. (%d) It is good!",cols,rows,frameCount++);
-            mvwprintw(messageBox,2,0,"There are %dx%d squares. (%d) It is good!",cols,rows,frameCount++);
-            mvwprintw(messageBox,3,0,"There are %dx%d squares. (%d) It is good!",cols,rows,frameCount++);
+            if (messageBox!=NULL) {
+                drawBorder(messageBox);
+                mvwprintw(messageBox,0,0,"There are %dx%d squares. (%d) It is good!",cols,rows,frameCount);
+            }
             for (int i=0;i<25;i++) {
                 if (keyLog[i]>0) {
                     mvprintw(6+i,2,"Key %d was pressed.",keyLog[i]);
@@ -89,6 +103,7 @@ int main(int argc,char**argv) {
             refresh();
             wrefresh(messageBox);
             lastTime=clock();
+            frameCount++;
         }
     }
     free(keyLog);
