@@ -70,6 +70,8 @@ int main(int argc,char**argv) {
             currentLogCounter=(currentLogCounter+1)%25;
             if (ch==KEY_RESIZE) {
                 getmaxyx(stdscr,rows,cols);
+                delwin(messageBox);
+                messageBox=newwin(4,cols-2,rows-5,1);
             }
         }
         if (clock()-lastTime>FRAMETIME) {
