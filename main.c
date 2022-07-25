@@ -45,9 +45,35 @@ boolean ToggleWindow(WINDOW**win,int w,int h,int x,int y) {
         *win=NULL;
         delwin(*win);
         clear();
+        return false;
     } else {
         *win=newwin(h,w,y,x);
+        return true;
     }
+}
+
+void changeColor(int*oldcol,int newcol) {
+    attroff(COLOR_PAIR(*oldcol));
+    attron(COLOR_PAIR(newcol));
+    *oldcol=newcol;
+}
+
+//Provide the width and height that the background needs to cover as well as an offset x and y value.
+void drawBackground(int*currentcol,int background_id,int x,int y,int w,int h) {
+    int oldcol=*currentcol;
+    switch(background_id) {
+        case 0:{
+            move(y,x);
+            changeColor(currentcol,3);
+            for (int yy=0;yy<h;yy++) {
+                for (int xx=0;xx<w;xx++) {
+                    addch(ACS_DIAMOND);
+                }
+                move(getcury(stdscr)+1,x);
+            }
+        }break;
+    }
+    changeColor(currentcol,oldcol);
 }
 
 int main(int argc,char**argv) {
@@ -57,15 +83,26 @@ int main(int argc,char**argv) {
     int rows,cols;
     clock_t lastTime = clock();
     int FRAMETIME = CLOCKS_PER_SEC/60;
+    int currentcol=1;
 
     initscr();
+
     start_color();
-    init_pair(1,COLOR_RED,COLOR_BLACK);
     getmaxyx(stdscr,rows,cols);
     cbreak();
     keypad(stdscr,TRUE);
     nodelay(stdscr,TRUE);
     noecho();
+
+    init_pair(1,COLOR_BLACK,COLOR_BLACK);
+    init_pair(2,COLOR_RED,COLOR_BLACK);
+    init_pair(3,COLOR_GREEN,COLOR_BLACK);
+    init_pair(4,COLOR_YELLOW,COLOR_BLACK);
+    init_pair(5,COLOR_BLUE,COLOR_BLACK);
+    init_pair(6,COLOR_MAGENTA,COLOR_BLACK);
+    init_pair(7,COLOR_CYAN,COLOR_BLACK);
+    init_pair(8,COLOR_WHITE,COLOR_BLACK);
+    changeColor(&currentcol,6);
 
     WINDOW*messageBox=newwin(4,cols-2,rows-5,1);
     drawBorder(messageBox);
@@ -80,12 +117,21 @@ int main(int argc,char**argv) {
         if ((ch=getch())!=ERR) {
             keyLog[currentLogCounter]=ch;
             currentLogCounter=(currentLogCounter+1)%25;
-            if (ch=='A') {
-                ToggleWindow(&messageBox,cols-2,4,1,rows-5);
-            }
-            if (ch==KEY_RESIZE) {
-                resizeOccured=true;
-                getmaxyx(stdscr,rows,cols);
+            switch (ch) {
+                case 'A':
+                case 'a':{
+                    ToggleWindow(&messageBox,cols-2,4,1,rows-5);
+                }break;
+                case KEY_RESIZE:{
+                    resizeOccured=true;
+                    getmaxyx(stdscr,rows,cols);
+                }break;
+                case KEY_RIGHT:{
+                    changeColor(&currentcol,(currentcol+1)%8);
+                }break;
+                case KEY_LEFT:{
+                    changeColor(&currentcol,(currentcol-1>=0)?currentcol-1:7);
+                }break;
             }
         }
         if (clock()-lastTime>FRAMETIME) {
@@ -96,6 +142,7 @@ int main(int argc,char**argv) {
                 messageBox=newwin(4,cols-2,rows-5,1);
             }
             //mvprintw(5,7,"There are %dx%d squares. (%d)",cols,rows,frameCount++);
+            drawBackground(&currentcol,0,4,4,4,4);
             if (messageBox!=NULL) {
                 drawBorder(messageBox);
                 mvwprintw(messageBox,0,0,"There are %dx%d squares. (%d) It is good!",cols,rows,frameCount);
@@ -103,6 +150,9 @@ int main(int argc,char**argv) {
             for (int i=0;i<25;i++) {
                 if (keyLog[i]>0) {
                     mvprintw(6+i,2,"Key %d was pressed.",keyLog[i]);
+                    short r,g,b;
+                    color_content(currentcol,&r,&g,&b);
+                    mvprintw(6+i,30,"%d %d %d",r,g,b);
                 }
             }
             refresh();
